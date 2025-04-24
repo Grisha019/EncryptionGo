@@ -1,0 +1,48 @@
+﻿@model EncryptionGo.Models.EncryptionViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Index" method="post">
+    <div>
+        <label>Текст для шифрования:</label><br />
+        <textarea name="InputText" rows="4" cols="60">@Model.InputText</textarea>
+    </div>
+    <div>
+        <label>Алгоритм:</label>
+        <select asp-for="Algorithm" onchange="toggleKeys()">
+            <option value="AES">AES</option>
+            <option value="RSA">RSA</option>
+        </select>
+    </div>
+    <div id="aesKeys" style="display:@(Model.Algorithm=="AES"?"block":"none")">
+        <label>Ключ (Base64):</label><br />
+        <input name="Key" value="@Model.Key" size="70" /><br />
+        <label>IV (Base64):</label><br />
+        <input name="IV" value="@Model.IV" size="70" />
+    </div>
+    <div id="rsaKeys" style="display:@(Model.Algorithm=="RSA"?"block":"none")">
+        <label>Public Key (Base64):</label><br />
+        <textarea name="PublicKey" rows="3" cols="70">@Model.PublicKey</textarea><br />
+        <label>Private Key (Base64):</label><br />
+        <textarea name="PrivateKey" rows="3" cols="70">@Model.PrivateKey</textarea>
+    </div>
+    <button type="submit">Шифровать и дешифровать</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.EncryptedText))
+{
+    <h2>Результаты</h2>
+    <p><strong>Зашифрованный (Base64):</strong></p>
+    <textarea rows="4" cols="70" readonly>@Model.EncryptedText</textarea>
+    <p><strong>Дешифрованный:</strong> @Model.DecryptedText</p>
+}
+
+<script>
+    function toggleKeys() {
+        var algo = document.querySelector('select[name="Algorithm"]').value;
+        document.getElementById("aesKeys").style.display = algo==="AES"?"block":"none";
+        document.getElementById("rsaKeys").style.display = algo==="RSA"?"block":"none";
+    }
+</script>
